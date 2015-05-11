@@ -9,13 +9,14 @@
 #ifndef __RayTracer__geometry__
 #define __RayTracer__geometry__
 
-#include <memory>
-#include "vector.h"
-
-using std::shared_ptr;
+#include "matrix.h"
+#include "intersection.h"
 
 class Geometry
 {
+public:
+    virtual void updateGeometry(const Matrix4 & transformMatrix) = 0;
+    virtual Intersection * getIntersection(const Vector4 & source, const Vector4 & direction) = 0;
 };
 
 #endif /* defined(__RayTracer__geometry__) */

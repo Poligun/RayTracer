@@ -7,3 +7,8 @@
 //
 
 #include "scene.h"
+
+void Scene::prepareForRender()
+{
+    this->rootObject.updateTransformMatrix(Matrix4::Identity());
+}
