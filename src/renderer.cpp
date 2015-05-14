@@ -85,9 +85,8 @@ void Renderer::render()
     
     delete[] jobs;
     
-    BitmapWriter writer(this->outputPath);
-    writer.writeBitmap(bitmap.get());
-    writer.close();
+    BitmapWriter writer;
+    writer.writeBitmap(*bitmap, this->outputPath);
     
     auto endTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     double timeCost = (endTime - startTime) / 1000000.0;
@@ -115,9 +114,9 @@ void * RenderScene(void * message)
             Color color = job->camera->rayObject(job->scene->rootObject, job->camera->location, direction, job->scene->lights, job->numberOfRecursions);
             
             auto pixel = job->bitmap->get(j, i);
-            pixel->red   = color.r();
-            pixel->green = color.g();
-            pixel->blue  = color.b();
+            pixel.red   = color.r();
+            pixel.green = color.g();
+            pixel.blue  = color.b();
         }
     }
 

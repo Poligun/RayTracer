@@ -16,6 +16,7 @@ Object * ObjectLoader::loadObjectFile(const char * filePath) const
 {
 
     std::vector<Vector4> vertices;
+    std::vector<Vector4> vertexNormals;
     auto geometry = std::make_shared<PolygonGeometry>();
     double x, y, z;
     int v1, t1, v2, t2, v3, t3, n1, n2, n3;
@@ -50,6 +51,10 @@ Object * ObjectLoader::loadObjectFile(const char * filePath) const
             sscanf(buffer, "v %lf %lf %lf", &x, &y, &z);
             vertices.push_back(Vector4(x, y, z, 1.0));
         }
+        else if (std::regex_match(line, this->vertexNormalRegex)) {
+            sscanf(buffer, "vn %lf %lf %lf", &x, &y, &z);
+            vertexNormals.push_back(Vector4(x, y, z, 0.0));
+        }
         else if (std::regex_match(line, this->faceRegex)) {
             sscanf(buffer, "f %d %d %d", &v1, &v2, &v3);
             geometry->addTriangle(vertices[v1 - 1], vertices[v2 - 1], vertices[v3 - 1]);
@@ -61,12 +66,18 @@ Object * ObjectLoader::loadObjectFile(const char * filePath) const
             geometry->addTriangle(vertices[v1 - 1], vertices[v2 - 1], vertices[v3 - 1]);
             numberOfFaces++;
         }
+        else if (std::regex_match(line, this->faceWithNormalRegex)) {
+            sscanf(buffer, "f %d//%d %d//%d %d//%d", &v1, &n1, &v2, &n2, &v3, &n3);
+            geometry->addTriangle(vertices[v1 - 1], vertices[v2 - 1], vertices[v3 - 1],
+                                  vertexNormals[n1 - 1], vertexNormals[n2 - 1], vertexNormals[n3 - 1]);
+        }
         else if (std::regex_match(line, this->faceWithTextureAndNormalRegex)) {
             sscanf(buffer, "f %d/%d/%d %d/%d/%d %d/%d/%d", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3);
-            geometry->addTriangle(vertices[v1 - 1], vertices[v2 - 1], vertices[v3 - 1]);
+            geometry->addTriangle(vertices[v1 - 1], vertices[v2 - 1], vertices[v3 - 1],
+                                  vertexNormals[n1 - 1], vertexNormals[n2 - 1], vertexNormals[n3 - 1]);
             numberOfFaces++;
         }
-        
+
         if (peek == EOF)
             break;
     }

@@ -16,11 +16,14 @@ class TriangleGeometry : public Geometry
 private:
 
 public:
-    Vector4 transformedPoints[3];
+    Vector4 transformedVertices[3];
+    Vector4 transformedVertexNormals[3];
     Vector4 transformedEdges[2];
     Vector4 transformedNormal;
 
-    Vector4 points[3];
+    Vector4 vertices[3];
+    Vector4 vertexNormals[3];
+    bool hasVertexNormals = false;
 
     virtual void updateGeometry(const Matrix4 & transformMatrix);
     virtual Intersection * getIntersection(const Vector4 & source, const Vector4 & direction);

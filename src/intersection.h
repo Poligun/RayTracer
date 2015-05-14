@@ -17,8 +17,10 @@ class Intersection
 {
 public:
     double distance;
+    double u, v;
     Vector4 location;
     Vector4 normal;
+    Vector4 computedNormal; // This is the surface normal interpolated by location & vertex normals.
     Vector4 inversedRayDirection;
     std::shared_ptr<Material> material;
     

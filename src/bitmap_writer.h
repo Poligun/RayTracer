@@ -17,19 +17,15 @@ class Bitmap;
 class BitmapWriter
 {
 private:
-    FILE * file;
+    void writeWord(word word, FILE * file);
+    void writeDWord(dword dword, FILE * file);
     
-    void writeWord(word word);
-    void writeDWord(dword dword);
-    
-    void writeFileHeader(struct fileheader * fileheader);
-    void writeInfoHeader(struct infoheader * infoheader);
-    void writePixel(struct pixel * pixel);
+    void writeFileHeader(struct fileheader & fileheader, FILE * file);
+    void writeInfoHeader(struct infoheader & infoheader, FILE * file);
+    void writePixel(struct pixel & pixel, FILE * file);
     
 public:
-    BitmapWriter(const char * filePath);
-    void writeBitmap(Bitmap * bitmap);
-    void close();
+    void writeBitmap(Bitmap & bitmap, const char * filePath);
 };
 
 #endif /* defined(__RayTracer__bitmap_writer__) */

@@ -91,9 +91,9 @@ void Camera::rayScene(const Scene & scene, Bitmap & bitmap)
             //color.scale();
 
             auto pixel = bitmap.get(j, i);
-            pixel->red   = color.r();
-            pixel->green = color.g();
-            pixel->blue  = color.b();
+            pixel.red   = color.r();
+            pixel.green = color.g();
+            pixel.blue  = color.b();
         }
     }
 

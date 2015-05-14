@@ -11,6 +11,7 @@
 
 #include "headers.h"
 #include "bitmap_writer.h"
+#include "bitmap_reader.h"
 
 class Bitmap
 {
@@ -18,11 +19,14 @@ private:
     struct fileheader fileheader;
     struct infoheader infoheader;
 
-    struct pixel ** pixels;
+    struct pixel ** pixels = NULL;
     unsigned int bytesPerLine;
     unsigned int paddingZeros;
     
-    friend void BitmapWriter::writeBitmap(Bitmap *);
+    friend void BitmapWriter::writeBitmap(Bitmap &, const char *);
+    friend Bitmap * BitmapReader::readBitmap(const char *);
+    
+    void clean();
 
 public:
     unsigned int width;
@@ -31,9 +35,11 @@ public:
     Bitmap(unsigned int width, unsigned int height);
     ~Bitmap();
     
-    inline struct pixel * get(unsigned int x, unsigned int y)
+    void initialize(unsigned int width, unsigned int height);
+    
+    inline struct pixel & get(unsigned int x, unsigned int y)
     {
-        return & this->pixels[y][x];
+        return this->pixels[y][x];
     }
 };
 

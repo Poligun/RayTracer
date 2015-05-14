@@ -29,7 +29,7 @@ public:
     }
     
     int numberOfThreads = 1;
-    int numberOfRecursions = 3;
+    int numberOfRecursions = 5;
     const char * outputPath = NULL;
 
     void render();

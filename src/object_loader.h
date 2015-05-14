@@ -17,8 +17,10 @@ class ObjectLoader
 {
 private:
     std::regex vertexRegex = std::regex("^v [-+]?[0-9]*\\.?[0-9]+ [-+]?[0-9]*\\.?[0-9]+ [-+]?[0-9]*\\.?[0-9]+$");
+    std::regex vertexNormalRegex = std::regex("^vn [-+]?[0-9]*\\.?[0-9]+ [-+]?[0-9]*\\.?[0-9]+ [-+]?[0-9]*\\.?[0-9]+$");
     std::regex faceRegex = std::regex("^f [0-9]+ [0-9]+ [0-9]+$");
     std::regex faceWithTextureRegex = std::regex("^f [0-9]+/[0-9]+ [0-9]+/[0-9]+ [0-9]+/[0-9]+$");
+    std::regex faceWithNormalRegex = std::regex("^f [0-9]+//[0-9]+ [0-9]+//[0-9]+ [0-9]+//[0-9]+$");
     std::regex faceWithTextureAndNormalRegex = std::regex("^f [0-9]+/[0-9]+/[0-9]+ [0-9]+/[0-9]+/[0-9]+ [0-9]+/[0-9]+/[0-9]+$");
 
 public:

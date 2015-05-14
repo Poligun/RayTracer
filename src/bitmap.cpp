@@ -8,8 +8,26 @@
 
 #include "bitmap.h"
 
-Bitmap::Bitmap(unsigned int width, unsigned int height) : width(width), height(height)
+Bitmap::Bitmap(unsigned int width, unsigned int height)
 {
+    initialize(width, height);
+}
+
+void Bitmap::clean()
+{
+    if (this->pixels) {
+        for (auto i = 0; i < this->height; i++)
+            delete [] this->pixels[i];
+        delete [] this->pixels;
+    }
+    this->pixels = NULL;
+}
+
+void Bitmap::initialize(unsigned int width, unsigned int height)
+{
+    this->width = width;
+    this->height = height;
+    
     this->infoheader.width = width;
     this->infoheader.height = height;
     
@@ -18,6 +36,8 @@ Bitmap::Bitmap(unsigned int width, unsigned int height) : width(width), height(h
     this->infoheader.imageSize = this->bytesPerLine * height;
     this->fileheader.fileSize = this->infoheader.imageSize + FILE_HEADER_SIZE + INFO_HEADER_SIZE;
     
+    clean();
+    
     this->pixels = new struct pixel *[height];
     for (auto i = 0; i < height; i++)
         this->pixels[i] = new struct pixel[width];
@@ -25,8 +45,5 @@ Bitmap::Bitmap(unsigned int width, unsigned int height) : width(width), height(h
 
 Bitmap::~Bitmap()
 {
-    for (auto i = 0; i < this->height; i++)
-        delete [] this->pixels[i];
-    delete [] this->pixels;
+    clean();
 }
-
