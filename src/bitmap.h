@@ -33,7 +33,7 @@ public:
     unsigned int height;
 
     Bitmap(unsigned int width, unsigned int height);
-    ~Bitmap();
+    ~Bitmap() { clean(); };
     
     void initialize(unsigned int width, unsigned int height);
     

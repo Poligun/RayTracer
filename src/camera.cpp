@@ -7,57 +7,88 @@
 //
 
 #include "camera.h"
-#include <chrono>
+#include <cmath>
 
-Color Camera::rayObject(const Object & object, Vector4 source, Vector4 direction, const std::vector<std::shared_ptr<Light>> & lights, int depth)
+void Camera::lookAt(Vector4 vertex)
+{
+    this->zAxis = Vector4(this->location).subtract(vertex).normalize();
+    this->xAxis = Vector4(this->yAxis).crossProduct(this->zAxis).normalize();
+    this->yAxis = Vector4(this->zAxis).crossProduct(this->xAxis).normalize();
+}
+
+Color Camera::rayObject(const Object & object, const std::vector<std::shared_ptr<Light>> & lights, Vector4 source, Vector4 direction, double n1, int depth)
 {
     Color color;
     
     auto intersection = object.getIntersection(source, direction);
     
     if (intersection && intersection->material) {
-        color = intersection->material->ambientColor;
+        color = intersection->material->getAmbient(*intersection);
+        
+        double n2 = intersection->material->refractiveIndex;
+        if (intersection->inversedRayDirection.dotProduct(intersection->surfaceNormal) < 0.0)
+            n2 = 1.0;
+        double reflectivity = 1.0;
+        double refractivity = 0.0;
+
+        double cosThetaI = intersection->inversedRayDirection.dotProduct(intersection->normal);
+        double thetaI = acos(cosThetaI);
+        double sinThetaT = sin(thetaI) * n1 / n2;
+        
+        if (sinThetaT <= 1.0) {
+            double cosThetaT = sqrt(1 - sinThetaT * sinThetaT);
+            double Rs = pow((n1 * cosThetaI - n2 * cosThetaT) / (n1 * cosThetaI + n2 * cosThetaT), 2.0);
+            double Rp = pow((n1 * cosThetaT - n2 * cosThetaI) / (n1 * cosThetaT + n2 * cosThetaI), 2.0);
+            reflectivity = (Rs + Rp) / 2.0;
+            refractivity = 1.0 - reflectivity;
+        }
+    
+        Vector4 reflectionLocation = intersection->location;
+        reflectionLocation.add(Vector4(intersection->normal).multiply(0.001));
         
         for (auto it = lights.begin(); it != lights.end(); it++) {
             auto light = *it;
-
+            
             Vector4 lightDirection = light->transformedLocation;
             lightDirection.subtract(intersection->location).normalize();
-
+            
             if (intersection->normal.dotProduct(lightDirection) < 0.0)
                 continue;
-
-            Vector4 traceLocation = intersection->location;
-            traceLocation.add(Vector4(intersection->normal).multiply(0.001));
-            auto lightIntersection = object.getIntersection(traceLocation, lightDirection);
+    
+            auto lightIntersection = object.getIntersection(reflectionLocation, lightDirection);
             
-            if (!lightIntersection)
-                color.add(light->shadeIntersection(*intersection, lightDirection));
-            else
+            if (!lightIntersection) {
+                Color lightColor = light->shadeIntersection(*intersection, lightDirection);
+                lightColor.multiply(reflectivity);
+                color.add(lightColor);
+            }
+            else {
                 delete lightIntersection;
+            }
         }
         
-        if (depth > 0) {
-            if (intersection->material->reflectivity > 0.0) {
-                Vector4 *reflectionDirection = intersection->getReflectionDirection();
-                Vector4 reflectionLocation = intersection->location;
-                reflectionLocation.add(Vector4(intersection->normal).multiply(0.001));
-                Color reflectionColor = rayObject(object, reflectionLocation, *reflectionDirection, lights, depth - 1);
-                reflectionColor.multiply(intersection->material->reflectivity);
-                color.add(reflectionColor);
-                delete reflectionDirection;
-            }
+        if (depth > 0 && intersection->material->reflects) {
+            Vector4 reflectionDirection = intersection->normal;
+            reflectionDirection.multiply(2.0 * intersection->normal.dotProduct(intersection->inversedRayDirection));
+            reflectionDirection.subtract(intersection->inversedRayDirection);
+            reflectionDirection.normalize();
             
-            if (intersection->material->refractivity > 0.0) {
-                Vector4 *refractionDirection = intersection->getRefractionDirection();
-                if (refractionDirection) {
-                    Vector4 refractionLocation = intersection->location;
-                    refractionLocation.subtract(Vector4(intersection->normal).multiply(0.001));
-                    Color refractionColor = rayObject(object, refractionLocation, *refractionDirection, lights, depth - 1);
-                    refractionColor.multiply(intersection->material->refractivity);
-                    color.add(refractionColor);
-                    delete refractionDirection;
-                }
+            Color reflectionColor = rayObject(object, lights, reflectionLocation, reflectionDirection, n1, depth - 1);
+            reflectionColor.multiply(reflectivity);
+            color.add(reflectionColor);
+            
+            if (refractivity > 0.0) {
+                Vector4 refractionDirection = intersection->normal;
+                refractionDirection.multiply(cosThetaI * n1 / n2 - sqrt(1 - sinThetaT * sinThetaT));
+                refractionDirection.subtract(Vector4(intersection->inversedRayDirection).multiply(n1 / n2));
+                refractionDirection.normalize();
+        
+                Vector4 refractionLocation = intersection->location;
+                refractionLocation.subtract(Vector4(intersection->normal).multiply(0.001));
+                
+                Color refractionColor = rayObject(object, lights, refractionLocation, refractionDirection, n2, depth - 1);
+                refractionColor.multiply(refractivity);
+                color.add(refractionColor);
             }
         }
 
@@ -67,38 +98,3 @@ Color Camera::rayObject(const Object & object, Vector4 source, Vector4 direction
     return color;
 }
 
-void Camera::rayScene(const Scene & scene, Bitmap & bitmap)
-{
-    double halfWidth = bitmap.width / 2.0;
-    double halfHeight = bitmap.height / 2.0;
-    
-    auto startTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
-    for (int i = 0; i < bitmap.height; i++) {
-        printf("Scanning: %d/%d\n", i, bitmap.height);
-        for (int j = 0; j < bitmap.width; j++) {
-            double x = this->xyRatio * (j - halfWidth) / halfWidth;
-            double y = (i - halfHeight) / halfHeight;
-
-            Vector4 direction(this->location);
-            direction.add(Vector4(this->xAxis).multiply(x));
-            direction.add(Vector4(this->yAxis).multiply(y));
-            direction.add(Vector4(this->zAxis).multiply(-this->focalLength));
-            direction.subtract(this->location);
-            direction.normalize();
-
-            Color color = rayObject(scene.rootObject, this->location, direction, scene.lights, 3);
-            //color.scale();
-
-            auto pixel = bitmap.get(j, i);
-            pixel.red   = color.r();
-            pixel.green = color.g();
-            pixel.blue  = color.b();
-        }
-    }
-
-    auto endTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    double timeCost = (endTime - startTime) / 1000.0;
-    
-    printf("Time Cost: %lf\n", timeCost);
-}

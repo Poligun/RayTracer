@@ -32,10 +32,13 @@ Intersection * SphereGeometry::getIntersection(const Vector4 & source, const Vec
     if (delta < 0.0)
         return NULL;
     
-    float root = (-b - sqrt(delta)) / (2.0 * a);
+    float root1 = (-b - sqrt(delta)) / (2.0 * a);
+    float root2 = (-b + sqrt(delta)) / (2.0 * a);
     
-    if (root < 0.0)
+    if (root2 < 0.0)
         return NULL;
+    
+    float root = (root1 > 0.0) ? root1 : root2;
     
     Intersection * intersection = new Intersection();
 
@@ -44,9 +47,13 @@ Intersection * SphereGeometry::getIntersection(const Vector4 & source, const Vec
     intersection->location = source;
     intersection->location.add(Vector4(direction).multiply(root));
 
-    intersection->normal = Vector4(intersection->location).subtract(this->transformedCenter);
-    intersection->normal.normalize();
+    intersection->surfaceNormal = Vector4(intersection->location).subtract(this->transformedCenter);
+    intersection->surfaceNormal.normalize();
     intersection->inversedRayDirection = Vector4(direction).multiply(-1);
+    
+    intersection->normal = intersection->surfaceNormal;
+    if (intersection->inversedRayDirection.dotProduct(intersection->normal) < 0.0)
+        intersection->normal.multiply(-1.0);
 
     return intersection;
 }

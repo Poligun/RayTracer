@@ -11,24 +11,19 @@
 
 Color BlinnLight::shadeIntersection(const Intersection & intersection, const Vector4 & lightDirection)
 {
-    Color color;
-    
-    Color diffuseColor = Color(this->lightColor);
-    diffuseColor.multiply(intersection.material->diffuseColor);
-    diffuseColor.multiply(intersection.normal.dotProduct(lightDirection));
+    Color color = Light::shadeIntersection(intersection, lightDirection);
     
     Vector4 h = lightDirection;
     h.add(intersection.inversedRayDirection);
     h.normalize();
     
-    double power = pow(std::max(0.0, intersection.normal.dotProduct(h)), this->blinnPowerCoefficient);
+    double power = pow(std::max(0.0, intersection.normal.dotProduct(h)), intersection.material->specularExponent);
     
     Color specularColor = Color(this->lightColor);
-    specularColor.multiply(intersection.material->specularColor);
+
+    specularColor.multiply(intersection.material->getSpecular(intersection));
     specularColor.multiply(power);
     
-    color.add(diffuseColor);
     color.add(specularColor);
-    
     return color;
 }

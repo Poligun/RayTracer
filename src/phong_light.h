@@ -1,20 +1,20 @@
 //
-//  blinn_light.h
+//  phong_light.h
 //  RayTracer
 //
-//  Created by ZhaoYuhan on 5/8/15.
+//  Created by ZhaoYuhan on 5/19/15.
 //  Copyright (c) 2015 ZhaoYuhan. All rights reserved.
 //
 
-#ifndef __RayTracer__blinn_light__
-#define __RayTracer__blinn_light__
+#ifndef __RayTracer__phong_light__
+#define __RayTracer__phong_light__
 
 #include "light.h"
 
-class BlinnLight : public Light
+class PhongLight : public Light
 {
 public:
     virtual Color shadeIntersection(const Intersection & intersection, const Vector4 & lightDirection);
 };
 
-#endif /* defined(__RayTracer__blinn_light__) */
+#endif /* defined(__RayTracer__phong_light__) */

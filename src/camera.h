@@ -36,8 +36,8 @@ public:
     double focalLength;
     double xyRatio = 1.0;
     
-    Color rayObject(const Object & object, Vector4 source, Vector4 direction, const std::vector<std::shared_ptr<Light>> & lights, int depth);
-    void rayScene(const Scene & scene, Bitmap & bitmap);
+    void lookAt(Vector4 vertex);
+    Color rayObject(const Object & object, const std::vector<std::shared_ptr<Light>> & lights, Vector4 source, Vector4 direction, double n1, int depth);
 };
 
 #endif /* defined(__RayTracer__camera__) */

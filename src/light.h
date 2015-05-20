@@ -19,7 +19,7 @@ public:
     Color lightColor;
     
     virtual void updateTransformMatrix(const Matrix4 & parentMatrix);
-    virtual Color shadeIntersection(const Intersection & intersection, const Vector4 & lightDirection) = 0;
+    virtual Color shadeIntersection(const Intersection & intersection, const Vector4 & lightDirection);
 };
 
 #endif /* defined(__RayTracer__light__) */

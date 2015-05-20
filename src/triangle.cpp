@@ -79,22 +79,25 @@ Intersection * TriangleGeometry::getIntersection(const Vector4 & source, const V
     intersection->u = u;
     intersection->v = v;
     
+    if (this->hasTextureCoordinates) {
+        intersection->textureCoordinate = Vector4(this->textureCoordinates[0]).multiply(1.0 - u - v);
+        intersection->textureCoordinate.add(Vector4(this->textureCoordinates[1]).multiply(u));
+        intersection->textureCoordinate.add(Vector4(this->textureCoordinates[2]).multiply(v));
+    }
+    
     if (this->hasVertexNormals) {
-        intersection->computedNormal = Vector4(this->transformedVertexNormals[0]).multiply(1 - u - v);
-        intersection->computedNormal.add(Vector4(this->transformedVertexNormals[1]).multiply(u));
-        intersection->computedNormal.add(Vector4(this->transformedVertexNormals[2]).multiply(v));
-        intersection->computedNormal.normalize();
-        intersection->normal = intersection->computedNormal;
+        intersection->surfaceNormal = Vector4(this->transformedVertexNormals[0]).multiply(1 - u - v);
+        intersection->surfaceNormal.add(Vector4(this->transformedVertexNormals[1]).multiply(u));
+        intersection->surfaceNormal.add(Vector4(this->transformedVertexNormals[2]).multiply(v));
+        intersection->surfaceNormal.normalize();
     }
     else {
-        intersection->normal = this->transformedNormal;
+        intersection->surfaceNormal = this->transformedNormal;
     }
     
-    Vector4 location = this->transformedVertices[0];
-    location.add(Vector4(this->transformedEdges[0]).multiply(u));
-    location.add(Vector4(this->transformedEdges[1]).multiply(v));
-    
     intersection->inversedRayDirection = Vector4(direction).multiply(-1.0);
+
+    intersection->normal = intersection->surfaceNormal;
     if (intersection->inversedRayDirection.dotProduct(intersection->normal) < 0.0)
         intersection->normal.multiply(-1.0);
     

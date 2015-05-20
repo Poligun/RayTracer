@@ -16,15 +16,10 @@ class Vector4
 public:
     double values[4] = {0.0};
 
-    inline double & x() { return values[0]; };
-    inline double & y() { return values[1]; };
-    inline double & z() { return values[2]; };
-    inline double & w() { return values[3]; };
-    
-    inline double & r() { return values[0]; };
-    inline double & g() { return values[1]; };
-    inline double & b() { return values[2]; };
-    inline double & a() { return values[3]; };
+    inline double x() const { return values[0]; };
+    inline double y() const { return values[1]; };
+    inline double z() const { return values[2]; };
+    inline double w() const { return values[3]; };
 
     Vector4()
     {
@@ -43,17 +38,17 @@ public:
     
     void set(double x, double y, double z)
     {
-        this->x() = x;
-        this->y() = y;
-        this->z() = z;
+        values[0] = x;
+        values[1] = y;
+        values[2] = z;
     }
     
     void set(double x, double y, double z, double w)
     {
-        this->x() = x;
-        this->y() = y;
-        this->z() = z;
-        this->w() = w;
+        values[0] = x;
+        values[1] = y;
+        values[2] = z;
+        values[3] = w;
     }
 
     Vector4 & normalize();

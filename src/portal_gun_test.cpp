@@ -9,22 +9,22 @@
 #include "portal_gun_test.h"
 #include "object_loader.h"
 
+#include "simple_material.h"
 #include "blinn_light.h"
 #include "square.h"
 
 void PortalGunTest::run()
 {
-    auto material1 = std::make_shared<Material>();
-    material1->ambientColor.set(0.3, 0.3, 0.3);
-    material1->diffuseColor.set(0.15, 0.15, 0.15);
-    material1->specularColor.set(0.15, 0.15, 0.15);
-    material1->reflectivity = 0.25;
-    material1->refractivity = 0.6;
+    auto material1 = std::make_shared<SimpleMaterial>();
+    material1->setAmbient(0.3, 0.3, 0.3);
+    material1->setDiffuse(0.15, 0.15, 0.15);
+    material1->setSpecular(0.15, 0.15, 0.15);
+    material1->reflects = true;
     material1->refractiveIndex = 1.22;
     
-    auto material2 = std::make_shared<Material>();
-    material2->ambientColor.set(0.1, 0.1, 0.1);
-    material2->reflectivity = 1.0;
+    auto material2 = std::make_shared<SimpleMaterial>();
+    material2->setAmbient(0.1, 0.1, 0.1);
+    material1->reflects = true;
     
     auto object1 = SceneTest::addObjectFromFile("/Users/zhaoyuhan/Documents/smooth_portal.obj");
     object1->material = material1;

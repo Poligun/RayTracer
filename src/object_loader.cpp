@@ -70,6 +70,7 @@ Object * ObjectLoader::loadObjectFile(const char * filePath) const
             sscanf(buffer, "f %d//%d %d//%d %d//%d", &v1, &n1, &v2, &n2, &v3, &n3);
             geometry->addTriangle(vertices[v1 - 1], vertices[v2 - 1], vertices[v3 - 1],
                                   vertexNormals[n1 - 1], vertexNormals[n2 - 1], vertexNormals[n3 - 1]);
+            numberOfFaces++;
         }
         else if (std::regex_match(line, this->faceWithTextureAndNormalRegex)) {
             sscanf(buffer, "f %d/%d/%d %d/%d/%d %d/%d/%d", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3);

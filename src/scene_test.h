@@ -20,11 +20,13 @@
 #include "object.h"
 #include "object_loader.h"
 #include "light.h"
+#include "bitmap_reader.h"
 
 class SceneTest : public Test
 {
 private:
     ObjectLoader objectLoader;
+    BitmapReader bitmapReader;
 
 protected:
     double PI = 3.1415926535;
@@ -38,6 +40,8 @@ protected:
     std::shared_ptr<Object> addObject(Object * object);
     std::shared_ptr<Object> addObjectFromFile(const char * filePath);
     std::shared_ptr<Light> addLight(Light * light);
+    
+    std::shared_ptr<Bitmap> loadTexture(const char * filePath);
     
 public:
     int outputWidth = 640;

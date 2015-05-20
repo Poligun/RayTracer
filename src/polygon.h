@@ -20,8 +20,11 @@ private:
 public:
     std::vector<std::shared_ptr<TriangleGeometry>> triangles;
 
-    void addTriangle(Vector4 vertex1, Vector4 vertex2, Vector4 vertex3);
-    void addTriangle(Vector4 vertex1, Vector4 vertex2, Vector4 vertex3, Vector4 normal1, Vector4 normal2, Vector4 normal3);
+    std::shared_ptr<TriangleGeometry> addTriangle(Vector4 vertex1, Vector4 vertex2, Vector4 vertex3);
+    std::shared_ptr<TriangleGeometry> addTriangle(Vector4 vertex1, Vector4 vertex2, Vector4 vertex3, Vector4 normal1, Vector4 normal2, Vector4 normal3);
+    std::shared_ptr<TriangleGeometry> addTriangle(Vector4 vertex1, Vector4 vertex2, Vector4 vertex3,
+                     Vector4 normal1, Vector4 normal2, Vector4 normal3,
+                     Vector4 textureCoordinate1, Vector4 textureCoordinate2, Vector4 textureCoordinate3);
     
     virtual void updateGeometry(const Matrix4 & transformMatrix);
     virtual Intersection * getIntersection(const Vector4 & source, const Vector4 & direction);

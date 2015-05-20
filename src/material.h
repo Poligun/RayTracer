@@ -11,17 +11,18 @@
 
 #include "color.h"
 
+class Intersection;
+
 class Material
 {
 public:
-    Color ambientColor;
-    Color diffuseColor;
-    Color specularColor;
+    double specularExponent = 20.0;
+    bool reflects = false;
+    double refractiveIndex = 0.0001;
     
-    double reflectivity = 0.0;
-    
-    double refractivity = 0.0;
-    double refractiveIndex = 1.0;
+    virtual Color getAmbient(const Intersection & intersection) = 0;
+    virtual Color getDiffuse(const Intersection & intersection) = 0;
+    virtual Color getSpecular(const Intersection & intersection) = 0;
 };
 
 #endif /* defined(__RayTracer__material__) */

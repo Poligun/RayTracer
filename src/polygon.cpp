@@ -8,16 +8,17 @@
 
 #include "polygon.h"
 
-void PolygonGeometry::addTriangle(Vector4 vertex1, Vector4 vertex2, Vector4 vertex3)
+std::shared_ptr<TriangleGeometry> PolygonGeometry::addTriangle(Vector4 vertex1, Vector4 vertex2, Vector4 vertex3)
 {
     auto triangle = std::make_shared<TriangleGeometry>();
     triangle->vertices[0] = vertex1;
     triangle->vertices[1] = vertex2;
     triangle->vertices[2] = vertex3;
     this->triangles.push_back(triangle);
+    return triangle;
 }
 
-void PolygonGeometry::addTriangle(Vector4 vertex1, Vector4 vertex2, Vector4 vertex3, Vector4 normal1, Vector4 normal2, Vector4 normal3)
+std::shared_ptr<TriangleGeometry> PolygonGeometry::addTriangle(Vector4 vertex1, Vector4 vertex2, Vector4 vertex3, Vector4 normal1, Vector4 normal2, Vector4 normal3)
 {
     auto triangle = std::make_shared<TriangleGeometry>();
     triangle->vertices[0] = vertex1;
@@ -28,6 +29,28 @@ void PolygonGeometry::addTriangle(Vector4 vertex1, Vector4 vertex2, Vector4 vert
     triangle->vertexNormals[2] = normal3;
     triangle->hasVertexNormals = true;
     this->triangles.push_back(triangle);
+    return triangle;
+}
+
+
+std::shared_ptr<TriangleGeometry> PolygonGeometry::addTriangle(Vector4 vertex1, Vector4 vertex2, Vector4 vertex3,
+                 Vector4 normal1, Vector4 normal2, Vector4 normal3,
+                 Vector4 textureCoordinate1, Vector4 textureCoordinate2, Vector4 textureCoordinate3)
+{
+    auto triangle = std::make_shared<TriangleGeometry>();
+    triangle->vertices[0] = vertex1;
+    triangle->vertices[1] = vertex2;
+    triangle->vertices[2] = vertex3;
+    triangle->vertexNormals[0] = normal1;
+    triangle->vertexNormals[1] = normal2;
+    triangle->vertexNormals[2] = normal3;
+    triangle->hasVertexNormals = true;
+    triangle->textureCoordinates[0] = textureCoordinate1;
+    triangle->textureCoordinates[1] = textureCoordinate2;
+    triangle->textureCoordinates[2] = textureCoordinate3;
+    triangle->hasTextureCoordinates = true;
+    this->triangles.push_back(triangle);
+    return triangle;
 }
 
 void PolygonGeometry::updateGeometry(const Matrix4 & transformMatrix)

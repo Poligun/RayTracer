@@ -10,7 +10,6 @@
 #define __RayTracer__portal_gun_test__
 
 #include "scene_test.h"
-#include "object_loader.h"
 
 class PortalGunTest : public SceneTest
 {

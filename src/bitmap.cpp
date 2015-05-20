@@ -43,7 +43,3 @@ void Bitmap::initialize(unsigned int width, unsigned int height)
         this->pixels[i] = new struct pixel[width];
 }
 
-Bitmap::~Bitmap()
-{
-    clean();
-}

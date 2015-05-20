@@ -29,6 +29,11 @@ std::shared_ptr<Light> SceneTest::addLight(Light * lightObject)
     return light;
 }
 
+std::shared_ptr<Bitmap> SceneTest::loadTexture(const char * filePath)
+{
+    return std::shared_ptr<Bitmap>(bitmapReader.readBitmap(filePath));
+}
+
 void SceneTest::run()
 {
     scene->prepareForRender();

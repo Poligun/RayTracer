@@ -110,10 +110,13 @@ void * RenderScene(void * message)
             direction.add(Vector4(job->camera->zAxis).multiply(- job->camera->focalLength));
             direction.subtract(job->camera->location);
             direction.normalize();
-
-            Color color = job->camera->rayObject(job->scene->rootObject, job->camera->location, direction, job->scene->lights, job->numberOfRecursions);
             
-            auto pixel = job->bitmap->get(j, i);
+            if (j == 100 && i == 540)
+                printf("debug\n");
+
+            Color color = job->camera->rayObject(job->scene->rootObject, job->scene->lights, job->camera->location, direction, 1.0, job->numberOfRecursions);
+            
+            struct pixel & pixel = job->bitmap->get(j, i);
             pixel.red   = color.r();
             pixel.green = color.g();
             pixel.blue  = color.b();

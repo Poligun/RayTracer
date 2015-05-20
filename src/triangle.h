@@ -22,7 +22,10 @@ public:
     Vector4 transformedNormal;
 
     Vector4 vertices[3];
+    Vector4 textureCoordinates[3];
     Vector4 vertexNormals[3];
+    
+    bool hasTextureCoordinates = false;
     bool hasVertexNormals = false;
 
     virtual void updateGeometry(const Matrix4 & transformMatrix);
